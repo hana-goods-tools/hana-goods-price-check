@@ -1,0 +1,104 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#17131a"><title>GOODS 購入金額チェッカー</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f6f4f7;color:#19161b;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;padding-bottom:100px}
+.hero{background:#17131a;color:#fff;padding:22px 14px 14px;position:sticky;top:0;z-index:8}.kicker{font-size:11px;letter-spacing:.18em;color:#d5aecf;font-weight:900}h1{font-size:22px;margin:5px 0}.sub{font-size:12px;color:#ccc6ce}
+.filters{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:13px}.filter,.clear{border:1px solid #5d5660;background:#242027;color:#fff;border-radius:12px;padding:9px 4px;font-size:12px;font-weight:800}.filter.active{background:#8b3e89;border-color:#a55aa3}.clear{grid-column:1/-1;padding:7px}
+main{padding:16px 11px}.sectionTitle{font-size:18px;font-weight:900;margin:0 2px 11px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.card{background:#fff;border-radius:17px;overflow:hidden;box-shadow:0 3px 14px #0000000b;position:relative}.visual{height:112px;background:linear-gradient(145deg,#f0ebf2,#faf9fb);display:flex;align-items:center;justify-content:center}.visual svg{width:82px;height:82px;stroke:#332c35;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.new{position:absolute;left:8px;top:8px;background:#ff4059;color:#fff;border-radius:8px;padding:4px 7px;font-size:9px;font-weight:900}.body{padding:10px}.name{font-size:13px;font-weight:900;line-height:1.35;min-height:38px}.priceRow{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin:5px 0 8px}.price{font-size:19px;font-weight:950}.limit{font-size:9px;color:#a91f36;background:#fff0f2;border:1px solid #efbac2;border-radius:999px;padding:3px 5px;font-weight:900}
+.qty{display:grid;grid-template-columns:34px 1fr 34px;align-items:center;text-align:center;border:1px solid #e1dce3;border-radius:10px;overflow:hidden}.qty button{border:0;background:#f1edf2;color:#211d22;font-size:20px;height:34px;font-weight:800}.qty b{font-size:15px}
+.phase,.note{margin-top:15px;background:#fff;border:1px solid #e4dce6;border-left:5px solid #8b3e89;border-radius:13px;padding:12px 13px;font-size:12px;line-height:1.65}.phase strong,.note strong{color:#702a70}.note{margin-bottom:6px;color:#5f5862}
+.total{position:fixed;bottom:0;left:0;right:0;background:#17131af3;color:#fff;z-index:10;padding:11px 17px calc(11px + env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:center;backdrop-filter:blur(12px)}.total small{display:block;color:#bbb4bd;font-size:10px}#count{font-weight:800}#sum{font-size:28px;font-weight:950}
+@media(min-width:720px){main{max-width:900px;margin:auto}.grid{grid-template-columns:repeat(3,1fr)}}
+</style></head><body>
+<header class="hero"><div class="kicker">GOODS</div><h1>購入金額チェッカー</h1><div class="sub">欲しいグッズの「＋」を押すと合計金額を自動計算</div>
+<div class="filters"><button class="filter active" data-filter="all">すべて</button><button class="filter" data-filter="old">前回グッズ</button><button class="filter" data-filter="new">追加グッズ NEW</button><button class="clear" id="clear">全部解除</button></div></header>
+<main><div class="sectionTitle" id="sectionTitle">すべてのグッズ（27商品）</div><div class="grid" id="grid"></div>
+<div class="phase" id="phase"></div>
+<div class="note"><strong>⚠️ 購入上限</strong><br>ペンライト：1点まで ／ ランダムフォトカード：10点まで ／ Born to Bloom通常商品：各3点まで<br>Members’ Collection：8/29〜30の数量限定EC先行販売は各1点、8/31〜9/4のEC受注販売は各3点。<br><br>※商品はすべて税込価格です。購入時は公式販売ページの最新情報をご確認ください。<br>※イラストは商品を識別しやすくするためのオリジナル簡易アイコンで、実際の商品デザインとは異なります。</div>
+</main><footer class="total"><div><small>SELECTED</small><span id="count">0点</span></div><div id="sum">¥0</div></footer>
+<script>
+const items=[
+{name:'HANA OFFICIAL LIGHT STICK',price:6000,group:'old',icon:'light',baseMax:1,member:false,qty:0},
+{name:'HANA ペンライトバッグ',price:3800,group:'old',icon:'bag',baseMax:3,member:false,qty:0},
+{name:'HANA ロゴパーカー',price:11000,group:'old',icon:'hoodie',baseMax:3,member:false,qty:0},
+{name:'HANA ロゴパンツ',price:9000,group:'old',icon:'pants',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom タオル',price:2500,group:'old',icon:'towel',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom Tシャツ GY',price:5500,group:'old',icon:'teegray',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom Tシャツ Rose',price:5300,group:'old',icon:'teerose',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom トートバッグ',price:3300,group:'old',icon:'tote',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom ミラーチャーム',price:1800,group:'old',icon:'mirror',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom リップポーチ',price:2000,group:'old',icon:'pouch',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom カードケース',price:2200,group:'old',icon:'cardcase',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom キーホルダー',price:1500,group:'old',icon:'key',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom ペンライトストラップ',price:1000,group:'old',icon:'strap',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom ペンライトチャーム',price:2000,group:'old',icon:'charm',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom ランダムフォトカード・ステッカーセット',price:500,group:'old',icon:'photos',baseMax:10,member:false,qty:0},
+{name:'Born to Bloom ロングスリーブTシャツ',price:6500,group:'new',icon:'longtee',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom ソックスセット',price:2800,group:'new',icon:'socks',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom シュシュ',price:1800,group:'new',icon:'scrunchie',baseMax:3,member:false,qty:0},
+{name:'Born to Bloom ベルト',price:7800,group:'new',icon:'belt',baseMax:3,member:false,qty:0},
+{name:'HANA ブランケット',price:4500,group:'new',icon:'blanket',baseMax:3,member:false,qty:0},
+{name:'Wallet chain / CHIKA',price:7500,group:'new',icon:'chain',baseMax:1,member:true,qty:0},
+{name:'Ring set / NAOKO',price:5500,group:'new',icon:'ring',baseMax:1,member:true,qty:0},
+{name:'Bento box / JISOO',price:7500,group:'new',icon:'bento',baseMax:1,member:true,qty:0},
+{name:'Tissue box case / YURI',price:5500,group:'new',icon:'tissue',baseMax:1,member:true,qty:0},
+{name:'Beanie / MOMOKA',price:3500,group:'new',icon:'beanie',baseMax:1,member:true,qty:0},
+{name:'One-strap backpack / KOHARU',price:5000,group:'new',icon:'backpack',baseMax:1,member:true,qty:0},
+{name:'Water bottle / MAHINA',price:5500,group:'new',icon:'bottle',baseMax:1,member:true,qty:0}
+];
+const colors={ink:"#332c35",pink:"#e59ab8",rose:"#c85576",purple:"#a982b1",gray:"#9b979f",cream:"#e7cca0",orange:"#e69b45",green:"#819489",silver:"#bcc1c6",white:"#fafafa"};
+function svg(type){
+const c=colors;
+const m={
+light:`<path fill="${c.pink}" d="M50 39C38 29 27 22 27 13c0-8 6-13 14-13 5 0 8 2 9 6 2-4 6-6 10-6 8 0 14 5 14 13 0 9-11 16-24 26Z" transform="translate(10 15)"/><rect fill="${c.rose}" x="54" y="58" width="12" height="42" rx="5"/>`,
+bag:`<path fill="${c.ink}" d="M29 38h62l7 62H22z"/><path fill="none" d="M43 39V27c0-18 34-18 34 0v12"/>`,
+hoodie:`<path fill="${c.ink}" d="M43 29c0-18 34-18 34 0l16 9 7 44-18 4-5-27v44H43V59l-5 27-18-4 7-44z"/><path fill="none" stroke="${c.pink}" d="M46 30q14 14 28 0"/>`,
+pants:`<path fill="${c.ink}" d="M37 16h46l-5 86H61l-2-48-4 48H35z"/><path fill="none" stroke="${c.purple}" d="M37 30h45"/>`,
+towel:`<rect fill="${c.purple}" x="10" y="35" width="100" height="49" rx="6"/><path fill="none" stroke="${c.pink}" d="M22 49h76M22 69h76"/>`,
+teegray:`<path fill="#77747a" d="M40 23 18 35l11 23 14-8v51h34V50l14 8 11-23-22-12-10 9H50z"/>`,
+teerose:`<path fill="${c.pink}" d="M40 23 18 35l11 23 14-8v51h34V50l14 8 11-23-22-12-10 9H50z"/>`,
+tote:`<path fill="${c.ink}" d="M27 39h66l6 65H21z"/><path fill="none" d="M42 40V25c0-17 36-17 36 0v15"/>`,
+mirror:`<circle fill="${c.pink}" cx="60" cy="59" r="31"/><circle fill="#f8e5ed" cx="60" cy="59" r="21"/><circle fill="none" cx="60" cy="16" r="8"/>`,
+pouch:`<rect fill="${c.pink}" x="36" y="28" width="48" height="75" rx="11"/><path fill="none" d="M36 49h48M44 28v-9h32v9"/>`,
+cardcase:`<rect fill="${c.ink}" x="18" y="37" width="84" height="50" rx="8"/><path fill="none" stroke="${c.purple}" d="M18 52h84M30 67h28"/>`,
+key:`<circle fill="${c.white}" cx="43" cy="45" r="22"/><path fill="none" d="M59 61l35 35m-9-9 9-9m-18 0 9-9"/>`,
+strap:`<rect fill="${c.ink}" x="35" y="15" width="50" height="24" rx="4"/><path fill="none" stroke="${c.rose}" stroke-width="12" d="M60 39v56"/><circle fill="${c.silver}" cx="60" cy="103" r="7"/>`,
+charm:`<circle fill="${c.purple}" cx="60" cy="58" r="26"/><circle fill="#f4e8f1" cx="60" cy="58" r="15"/><path fill="none" d="M60 32V18"/><circle fill="${c.silver}" cx="60" cy="13" r="5"/>`,
+photos:`<rect fill="${c.pink}" x="18" y="24" width="39" height="61" rx="5"/><rect fill="${c.purple}" x="40" y="29" width="39" height="61" rx="5"/><rect fill="${c.rose}" x="62" y="34" width="39" height="61" rx="5"/><path fill="none" stroke="white" d="M70 49h22M70 59h16"/>`,
+longtee:`<path fill="${c.ink}" d="M40 21 15 34l9 22 17-8v55h38V48l17 8 9-22-25-13-10 10H50z"/><path fill="none" stroke="${c.gray}" d="M39 50 24 84m57-34 15 34"/>`,
+socks:`<path fill="${c.white}" d="M28 18h27v51c0 13-8 21-20 21H19V74h9z"/><path fill="${c.ink}" d="M65 18h27v51c0 13-8 21-20 21H56V74h9z"/>`,
+scrunchie:`<path fill="${c.purple}" d="M60 22c10-13 26-5 24 10 16-5 24 12 12 22 14 8 8 26-8 25 5 16-12 25-24 14-9 15-27 7-26-9-16 4-24-13-12-23-14-9-5-26 10-25-4-15 14-23 24-11z"/><circle fill="#f6f4f7" cx="60" cy="58" r="14"/>`,
+belt:`<rect fill="${c.ink}" x="11" y="47" width="80" height="24" rx="3"/><rect fill="none" stroke="${c.silver}" stroke-width="6" x="81" y="40" width="28" height="38" rx="4"/><circle fill="${c.silver}" cx="28" cy="59" r="3"/><circle fill="${c.silver}" cx="43" cy="59" r="3"/>`,
+blanket:`<rect fill="${c.ink}" x="17" y="25" width="86" height="66" rx="7"/><path fill="none" stroke="${c.rose}" d="M17 70q21-13 43 0t43 0"/><path fill="none" stroke="${c.orange}" d="M28 91v11m16-11v11m16-11v11m16-11v11m16-11v11"/>`,
+chain:`<path fill="none" stroke="${c.silver}" stroke-width="8" d="M18 58q21-31 42 0t42 0"/><circle fill="${c.silver}" cx="18" cy="58" r="6"/><circle fill="${c.silver}" cx="102" cy="58" r="6"/>`,
+ring:`<circle fill="none" stroke="${c.silver}" stroke-width="8" cx="45" cy="61" r="27"/><circle fill="none" stroke="${c.ink}" stroke-width="8" cx="75" cy="61" r="27"/><path fill="${c.purple}" d="m69 29 7-13 8 13z"/>`,
+bento:`<rect fill="${c.cream}" x="17" y="34" width="86" height="53" rx="20"/><path fill="none" stroke="${c.rose}" d="M17 58h86M60 34v53"/>`,
+tissue:`<path fill="${c.ink}" d="M22 51h76l8 49H14z"/><path fill="${c.white}" d="M34 52 27 28h22l11-18 11 18h22l-8 24"/><rect fill="${c.pink}" x="42" y="45" width="36" height="11" rx="4"/>`,
+beanie:`<path fill="${c.ink}" d="M27 71c0-36 66-36 66 0v13H27z"/><rect fill="${c.ink}" x="22" y="75" width="76" height="25" rx="8"/><path fill="none" stroke="${c.purple}" d="M40 42l40 30M80 42 40 72"/>`,
+backpack:`<path fill="${c.green}" d="M34 39c0-23 52-23 52 0l12 62H22z"/><path fill="none" stroke="${c.gray}" d="M43 38V22m34 16V22M34 70h52"/>`,
+bottle:`<path fill="${c.orange}" d="M43 29h34l6 14v60H37V43z"/><rect fill="${c.gray}" x="45" y="13" width="30" height="18" rx="6"/><circle fill="#f1c36f" cx="60" cy="61" r="10"/>`
+};return `<svg viewBox="0 0 120 120">${m[type]}</svg>`}
+function tokyoStamp(){
+ const p=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
+ const v=Object.fromEntries(p.map(x=>[x.type,x.value]));return `${v.year}-${v.month}-${v.day}T${v.hour}:${v.minute}:${v.second}`;
+}
+function memberMax(){const n=tokyoStamp();return n>="2026-08-31T20:00:00"&&n<="2026-09-04T23:59:59"?3:1}
+let filter="all";
+function render(){
+ const mm=memberMax();items.forEach(x=>{x.max=x.member?mm:x.baseMax;if(x.qty>x.max)x.qty=x.max});
+ const shown=items.filter(x=>filter==="all"||x.group===filter);
+ document.getElementById("sectionTitle").textContent=filter==="all"?"すべてのグッズ（27商品）":filter==="old"?"前回グッズ（15商品）":"追加グッズ NEW（12商品）";
+ document.getElementById("grid").innerHTML=shown.map((x)=>`<article class="card">${x.group==="new"?'<span class="new">NEW</span>':''}<div class="visual">${svg(x.icon)}</div><div class="body"><div class="name">${x.name}</div><div class="priceRow"><span class="price">¥${x.price.toLocaleString("ja-JP")}</span><span class="limit">⚠️${x.max}点まで</span></div><div class="qty"><button onclick="chg(${items.indexOf(x)},-1)">−</button><b>${x.qty}</b><button onclick="chg(${items.indexOf(x)},1)">＋</button></div></div></article>`).join("");
+ const count=items.reduce((a,x)=>a+x.qty,0),sum=items.reduce((a,x)=>a+x.qty*x.price,0);document.getElementById("count").textContent=count+"点";document.getElementById("sum").textContent="¥"+sum.toLocaleString("ja-JP");
+ const n=tokyoStamp(),ph=document.getElementById("phase");
+ if(n>="2026-08-31T20:00:00"&&n<="2026-09-04T23:59:59")ph.innerHTML="<strong>⚠️ Members’ Collection</strong><br>8/31〜9/4 EC受注販売：<b>各3点まで</b>（自動切替中）";
+ else if(n>="2026-08-29T20:00:00"&&n<="2026-08-30T23:59:59")ph.innerHTML="<strong>⚠️ Members’ Collection</strong><br>8/29〜30 数量限定EC先行販売：<b>各1点まで</b>";
+ else ph.innerHTML="<strong>⚠️ Members’ Collection</strong><br>8/29〜30：各1点まで ／ 8/31〜9/4：各3点まで<br>販売期間に合わせて自動で切り替わります。";
+}
+window.chg=(i,d)=>{const x=items[i];x.qty=Math.max(0,Math.min(x.max,x.qty+d));render()};
+document.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");filter=b.dataset.filter;render()});
+document.getElementById("clear").onclick=()=>{items.forEach(x=>x.qty=0);render()};render();setInterval(render,60000);
+</script></body></html>
