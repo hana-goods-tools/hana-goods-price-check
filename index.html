@@ -13,8 +13,9 @@ body{margin:0;background:#f6f4f7;color:#19161b;font-family:-apple-system,BlinkMa
 .kicker{font-size:11px;letter-spacing:.18em;color:#c8a9cf;font-weight:800}
 h1{font-size:23px;margin:5px 0 4px;letter-spacing:.02em}
 .sub{font-size:12px;color:#c9c5ca}
-.actions{margin-top:11px;display:flex;gap:8px}
+.actions{margin-top:11px;display:flex;gap:8px;flex-wrap:wrap}
 button{border:1px solid #514b53;background:transparent;color:#fff;border-radius:999px;padding:7px 12px;font-weight:700;font-size:12px}
+.bloom-btn{border:1px solid #a34b59;background:#7d2432;color:#fff;text-decoration:none;border-radius:999px;padding:7px 12px;font-weight:700;font-size:12px}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;padding:12px}
 .card{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 3px 14px #0000000c;position:relative;display:block}
 .card input{position:absolute;opacity:0;pointer-events:none}
@@ -38,126 +39,26 @@ button{border:1px solid #514b53;background:transparent;color:#fff;border-radius:
 <div class="kicker">HANA GOODS</div>
 <h1>購入金額 CALCULATOR</h1>
 <div class="sub">欲しいグッズをタップすると合計金額を自動計算</div>
-<div class="actions"><button id="alloff">全部解除</button></div>
+<div class="actions">
+  <button id="alloff">全部解除</button>
+  <a href="hana-born-to-bloom-calculator.html" class="bloom-btn">🌹 Born to Bloom版</a>
+</div>
 </header>
 <main class="grid">
-<label class="card">
-  <input type="checkbox" data-price="7500">
-  <div class="icon">⛓️<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">CHIKA</div>
-    <div class="name">Wallet chain</div>
-    <div class="price">¥7,500</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="5500" checked>
-  <div class="icon">💍<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">NAOKO</div>
-    <div class="name">Ring set</div>
-    <div class="price">¥5,500</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="7500">
-  <div class="icon">🍱<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">JISOO</div>
-    <div class="name">Bento box</div>
-    <div class="price">¥7,500</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="5500">
-  <div class="icon">🧻<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">YURI</div>
-    <div class="name">Tissue box case</div>
-    <div class="price">¥5,500</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="3500" checked>
-  <div class="icon">🧢<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">MOMOKA</div>
-    <div class="name">Beanie</div>
-    <div class="price">¥3,500</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="5000">
-  <div class="icon">🎒<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">KOHARU</div>
-    <div class="name">One-strap backpack</div>
-    <div class="price">¥5,000</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="5500">
-  <div class="icon">🥤<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">MAHINA</div>
-    <div class="name">Water bottle</div>
-    <div class="price">¥5,500</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="6500">
-  <div class="icon">👕<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">&nbsp;</div>
-    <div class="name">ロングスリーブTシャツ</div>
-    <div class="price">¥6,500</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="2800">
-  <div class="icon">🧦<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">&nbsp;</div>
-    <div class="name">ソックスセット</div>
-    <div class="price">¥2,800</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="7800">
-  <div class="icon">🖤<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">&nbsp;</div>
-    <div class="name">ベルト</div>
-    <div class="price">¥7,800</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="1800">
-  <div class="icon">🎀<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">&nbsp;</div>
-    <div class="name">シュシュ</div>
-    <div class="price">¥1,800</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="4500" checked>
-  <div class="icon">🛏️<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">&nbsp;</div>
-    <div class="name">ブランケット</div>
-    <div class="price">¥4,500</div>
-  </div>
-</label>
-<label class="card">
-  <input type="checkbox" data-price="6000" checked>
-  <div class="icon">💡<span class="check">✓</span></div>
-  <div class="content">
-    <div class="member">&nbsp;</div>
-    <div class="name">OFFICIAL LIGHT STICK</div>
-    <div class="price">¥6,000</div>
-  </div>
-</label></main>
+<label class="card"><input type="checkbox" data-price="7500"><div class="icon">⛓️<span class="check">✓</span></div><div class="content"><div class="member">CHIKA</div><div class="name">Wallet chain</div><div class="price">¥7,500</div></div></label>
+<label class="card"><input type="checkbox" data-price="5500" checked><div class="icon">💍<span class="check">✓</span></div><div class="content"><div class="member">NAOKO</div><div class="name">Ring set</div><div class="price">¥5,500</div></div></label>
+<label class="card"><input type="checkbox" data-price="7500"><div class="icon">🍱<span class="check">✓</span></div><div class="content"><div class="member">JISOO</div><div class="name">Bento box</div><div class="price">¥7,500</div></div></label>
+<label class="card"><input type="checkbox" data-price="5500"><div class="icon">🧻<span class="check">✓</span></div><div class="content"><div class="member">YURI</div><div class="name">Tissue box case</div><div class="price">¥5,500</div></div></label>
+<label class="card"><input type="checkbox" data-price="3500" checked><div class="icon">🧢<span class="check">✓</span></div><div class="content"><div class="member">MOMOKA</div><div class="name">Beanie</div><div class="price">¥3,500</div></div></label>
+<label class="card"><input type="checkbox" data-price="5000"><div class="icon">🎒<span class="check">✓</span></div><div class="content"><div class="member">KOHARU</div><div class="name">One-strap backpack</div><div class="price">¥5,000</div></div></label>
+<label class="card"><input type="checkbox" data-price="5500"><div class="icon">🥤<span class="check">✓</span></div><div class="content"><div class="member">MAHINA</div><div class="name">Water bottle</div><div class="price">¥5,500</div></div></label>
+<label class="card"><input type="checkbox" data-price="6500"><div class="icon">👕<span class="check">✓</span></div><div class="content"><div class="member">&nbsp;</div><div class="name">ロングスリーブTシャツ</div><div class="price">¥6,500</div></div></label>
+<label class="card"><input type="checkbox" data-price="2800"><div class="icon">🧦<span class="check">✓</span></div><div class="content"><div class="member">&nbsp;</div><div class="name">ソックスセット</div><div class="price">¥2,800</div></div></label>
+<label class="card"><input type="checkbox" data-price="7800"><div class="icon">🖤<span class="check">✓</span></div><div class="content"><div class="member">&nbsp;</div><div class="name">ベルト</div><div class="price">¥7,800</div></div></label>
+<label class="card"><input type="checkbox" data-price="1800"><div class="icon">🎀<span class="check">✓</span></div><div class="content"><div class="member">&nbsp;</div><div class="name">シュシュ</div><div class="price">¥1,800</div></div></label>
+<label class="card"><input type="checkbox" data-price="4500" checked><div class="icon">🛏️<span class="check">✓</span></div><div class="content"><div class="member">&nbsp;</div><div class="name">ブランケット</div><div class="price">¥4,500</div></div></label>
+<label class="card"><input type="checkbox" data-price="6000" checked><div class="icon">💡<span class="check">✓</span></div><div class="content"><div class="member">&nbsp;</div><div class="name">OFFICIAL LIGHT STICK</div><div class="price">¥6,000</div></div></label>
+</main>
 <div class="note">※非公式の購入金額計算ツールです。商品名・価格は変更される場合があります。</div>
 <footer class="total"><div><small>SELECTED</small><span id="count"></span></div><div id="sum"></div></footer>
 <script>
