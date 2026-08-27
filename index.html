@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>HANA GOODS 購入金額チェッカー</title>
+<style>
+:root{--bg:#ffffff;--ink:#18151c;--dark:#17141b;--purple:#9b3f99;--pink:#e59abb;--red:#b82b3d;--line:#ded8e0}
+*{box-sizing:border-box} body{margin:0;background:#f8f6f9;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;color:var(--ink);padding-bottom:100px}
+header{background:#17141b;color:white;border-bottom:0;padding:25px 20px 20px;position:sticky;top:0;z-index:4}
+.kicker{color:#dda0d0;font-weight:900;letter-spacing:.25em;font-size:13px}.title{font-size:27px;font-weight:900;margin:7px 0 5px}.sub{color:#c8c2ca;font-size:13px}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}.tab,.clear{border:2px solid #5c5660;background:#211e25;color:white;border-radius:16px;padding:12px 4px;font-weight:800;font-size:14px}.tab.active{background:#9b3f99;color:#fff;border-color:#bd66b6}.clear{width:100%;margin-top:10px;background:#211e25;color:white;border-color:#5c5660}
+main{padding:20px 14px}.section-title{font-size:22px;font-weight:900;margin:0 0 16px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{background:white;border-radius:22px;overflow:hidden;box-shadow:0 8px 24px rgba(46,23,50,.07);border:0;display:flex;flex-direction:column}.art{height:118px;background:linear-gradient(145deg,#fbf8fc,#f3eef5);display:flex;align-items:center;justify-content:center;padding:12px}.art svg{width:88px;height:88px}
+.info{padding:14px;display:flex;flex-direction:column;flex:1}.name{font-weight:900;font-size:15px;line-height:1.35;min-height:42px}.price-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:9px 0}.price{font-size:25px;font-weight:950}.limit{font-size:11px;font-weight:900;color:#a61e34;background:#fff0f2;border:1px solid #f0b7c0;border-radius:999px;padding:4px 7px}.qty{display:grid;grid-template-columns:1fr 1.5fr 1fr;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:auto}.qty button{border:0;background:#f1eef2;font-size:27px;font-weight:800;height:48px}.qty span{display:grid;place-items:center;font-size:21px;font-weight:900;background:white}
+.badge{position:absolute;margin:10px;background:#b92d43;color:#fff;border-radius:9px;padding:5px 8px;font-size:10px;font-weight:900}.card{position:relative}
+footer{position:fixed;bottom:0;left:0;right:0;background:#1c1920eF;backdrop-filter:blur(12px);color:#fff;padding:12px 20px calc(12px + env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:end;z-index:5}.selected small{color:#aaa}.selected b{font-size:23px}.total{font-size:36px;font-weight:950}
+.note{margin:18px 2px 0;background:#fff8f8;border:1px solid #efdddd;padding:13px;border-radius:14px;font-size:12px;line-height:1.65}
+@media(min-width:700px){.grid{grid-template-columns:repeat(3,1fr)} main{max-width:950px;margin:auto}}
+</style>
+
+<style>
+/* 注意事項：スマホでも読みやすく */
+.notice, .notes, .note, .attention, .caution {
+  font-size: 14px !important;
+  line-height: 1.7 !important;
+  color: #2b2630 !important;
+  background: #fff !important;
+  border: 1px solid #e7dce8 !important;
+  border-left: 5px solid #9b3f99 !important;
+  border-radius: 14px !important;
+  padding: 14px 16px !important;
+  margin: 16px 0 110px !important;
+  font-weight: 600 !important;
+}
+.notice strong, .notes strong, .note strong, .attention strong, .caution strong {
+  color: #7f287e !important;
+  font-size: 15px !important;
+}
+@media (max-width:600px){
+  .notice, .notes, .note, .attention, .caution {
+    font-size: 13px !important;
+    line-height: 1.75 !important;
+    padding: 13px 14px !important;
+  }
+}
+</style>
+</head>
+<body>
+<header>
+<div class="kicker">GOODS</div><div class="title">購入金額チェッカー</div>
+<div class="sub">欲しいグッズの「＋」を押すと合計金額を自動計算</div>
+<div class="tabs"><button class="tab active" data-filter="all">すべて</button><button class="tab" data-filter="old">前回グッズ</button><button class="tab" data-filter="new">追加グッズ NEW</button></div>
+<button class="clear">全部解除</button>
+</header>
+<main><h2 class="section-title">すべてのグッズ</h2><div class="grid" id="grid"></div>
+<div id="salePhase" style="margin:18px 2px 0;background:#fff;border:1px solid #dfc8e2;border-left:5px solid #9b3f99;padding:15px 16px;border-radius:14px;font-size:13px;font-weight:800;line-height:1.75;color:#2b2630"></div>
+<div class="note"><strong>⚠️ 購入数について</strong><br>
+ペンライト：1点まで ／ フォトカード：10点まで ／ その他の通常グッズ：各3点まで<br>
+Members’ Collectionのみ販売期間によって1点→3点に変わります。<br><br>
+<span style="color:#6d6670;font-weight:500">※先行販売：9/7より順次発送予定 ／ 受注販売：11月下旬より順次発送予定<br>
+※購入時は公式販売ページの最新情報をご確認ください。<br>
+※イラストは商品を見分けやすくするためのオリジナル簡易アイコンです。</span></div>
+</main>
+<footer><div class="selected"><small>SELECTED</small><br><b><span id="count">0</span>点</b></div><div class="total" id="total">¥0</div></footer>
+<script>
+const C={dark:"#29252d",pink:"#e89bb8",red:"#c62e45",purple:"#b181b2",gray:"#c7c2c8",cream:"#e5cda6",green:"#788b80",orange:"#e69a43",silver:"#b8bec4"};
+const icons={
+light:`<svg viewBox="0 0 120 120"><path d="M60 45C42 30 31 20 31 8c0-9 7-15 16-15 6 0 11 3 13 8 3-5 8-8 14-8 9 0 16 6 16 15 0 12-12 22-30 37z" transform="translate(0 18)" fill="${C.pink}" stroke="${C.dark}" stroke-width="5"/><rect x="53" y="65" width="14" height="42" rx="6" fill="${C.red}" stroke="${C.dark}" stroke-width="5"/></svg>`,
+bag:`<svg viewBox="0 0 120 120"><path d="M37 43h46l9 58H28z" fill="${C.dark}" stroke="${C.pink}" stroke-width="4"/><path d="M47 44V31c0-18 26-18 26 0v13" fill="none" stroke="${C.purple}" stroke-width="8"/></svg>`,
+shirt:`<svg viewBox="0 0 120 120"><path d="M40 24 20 36l10 22 13-7v49h35V51l13 7 10-22-21-12-10 8H51z" fill="${C.dark}" stroke="${C.pink}" stroke-width="4"/></svg>`,
+pants:`<svg viewBox="0 0 120 120"><path d="M38 18h44l-3 84H61l-2-48-3 48H37z" fill="${C.dark}" stroke="${C.purple}" stroke-width="4"/><path d="M38 31h44" stroke="${C.pink}" stroke-width="4"/></svg>`,
+hoodie:`<svg viewBox="0 0 120 120"><path d="M45 30c0-20 30-20 30 0l15 9 8 47-18 3-5-28v43H45V61l-5 28-18-3 8-47z" fill="${C.dark}" stroke="${C.red}" stroke-width="4"/><path d="M47 31q13 14 26 0" fill="none" stroke="${C.pink}" stroke-width="4"/></svg>`,
+tote:`<svg viewBox="0 0 120 120"><path d="M29 42h62v64H29z" fill="${C.dark}" stroke="${C.purple}" stroke-width="4"/><path d="M43 45V24c0-15 34-15 34 0v21" fill="none" stroke="${C.dark}" stroke-width="6"/></svg>`,
+strap:`<svg viewBox="0 0 120 120"><path d="M35 15h50v25H35z" fill="${C.dark}" stroke="${C.red}" stroke-width="4"/><path d="M60 40v57" stroke="${C.red}" stroke-width="15"/><circle cx="60" cy="103" r="8" fill="${C.silver}" stroke="${C.dark}" stroke-width="4"/></svg>`,
+mirror:`<svg viewBox="0 0 120 120"><circle cx="60" cy="58" r="33" fill="${C.pink}" stroke="${C.dark}" stroke-width="5"/><circle cx="60" cy="58" r="23" fill="#f6dce7" stroke="${C.red}" stroke-width="3"/><circle cx="60" cy="15" r="9" fill="none" stroke="${C.dark}" stroke-width="5"/></svg>`,
+key:`<svg viewBox="0 0 120 120"><circle cx="45" cy="45" r="23" fill="#fafafa" stroke="${C.silver}" stroke-width="7"/><path d="M61 61l34 34m-9-9 9-9m-18 0 9-9" stroke="${C.dark}" stroke-width="7" stroke-linecap="round"/></svg>`,
+pouch:`<svg viewBox="0 0 120 120"><rect x="39" y="29" width="42" height="73" rx="10" fill="${C.pink}" stroke="${C.dark}" stroke-width="4"/><path d="M39 51h42" stroke="${C.dark}" stroke-width="5"/><circle cx="86" cy="49" r="7" fill="${C.silver}"/></svg>`,
+cardcase:`<svg viewBox="0 0 120 120"><rect x="20" y="36" width="80" height="52" rx="9" fill="${C.dark}" stroke="${C.purple}" stroke-width="4"/><path d="M27 50h66" stroke="${C.gray}" stroke-width="3"/><circle cx="89" cy="62" r="5" fill="${C.red}"/></svg>`,
+cards:`<svg viewBox="0 0 120 120">${[22,42,62].map((x,i)=>`<rect x="${x}" y="${25+i*5}" width="35" height="55" rx="5" fill="${[C.pink,C.purple,C.red][i]}" stroke="${C.dark}" stroke-width="3"/>`).join("")}<path d="M31 42h17m-17 9h13" stroke="white" stroke-width="3"/></svg>`,
+longtee:`<svg viewBox="0 0 120 120"><path d="M41 22 17 34l8 20 15-7v57h40V47l15 7 8-20-24-12-9 9H51z" fill="${C.dark}" stroke="${C.gray}" stroke-width="4"/><path d="M40 48 25 81m55-33 15 33" stroke="${C.dark}" stroke-width="13"/></svg>`,
+socks:`<svg viewBox="0 0 120 120"><path d="M31 20h25v49c0 11-7 20-18 20H22V73h9z" fill="#f4f1f1" stroke="${C.dark}" stroke-width="4"/><path d="M64 20h25v49c0 11-7 20-18 20H55V73h9z" fill="${C.dark}" stroke="${C.red}" stroke-width="4"/></svg>`,
+belt:`<svg viewBox="0 0 120 120"><path d="M15 48h74v24H15z" fill="${C.dark}" stroke="${C.gray}" stroke-width="3"/><rect x="80" y="41" width="28" height="38" rx="4" fill="none" stroke="${C.silver}" stroke-width="7"/><circle cx="28" cy="60" r="3" fill="${C.silver}"/><circle cx="41" cy="60" r="3" fill="${C.silver}"/></svg>`,
+scrunchie:`<svg viewBox="0 0 120 120"><path d="M60 24c10-13 25-5 23 9 16-4 23 12 12 22 14 8 8 25-7 25 5 15-12 24-23 13-9 14-26 7-25-8-16 3-23-13-12-23-13-9-5-25 10-24-3-15 14-22 23-11z" fill="${C.dark}" stroke="${C.purple}" stroke-width="4"/><circle cx="60" cy="58" r="15" fill="${C.bg}"/></svg>`,
+blanket:`<svg viewBox="0 0 120 120"><rect x="20" y="26" width="80" height="65" rx="8" fill="${C.dark}" stroke="${C.red}" stroke-width="4"/><path d="M20 77q20-13 40 0t40 0M29 91v10m15-10v10m15-10v10m15-10v10m15-10v10" stroke="${C.orange}" stroke-width="4"/></svg>`,
+towel:`<svg viewBox="0 0 120 120"><rect x="17" y="35" width="86" height="50" rx="7" fill="${C.purple}" stroke="${C.dark}" stroke-width="4"/><path d="M28 49h64M28 69h64" stroke="${C.pink}" stroke-width="5"/></svg>`,
+wallet:`<svg viewBox="0 0 120 120"><path d="M19 61q20-34 42 0t40 0" fill="none" stroke="${C.silver}" stroke-width="9" stroke-linecap="round"/><circle cx="20" cy="61" r="7" fill="${C.silver}"/><circle cx="101" cy="61" r="7" fill="${C.silver}"/></svg>`,
+ring:`<svg viewBox="0 0 120 120"><circle cx="45" cy="61" r="27" fill="none" stroke="${C.silver}" stroke-width="8"/><circle cx="75" cy="61" r="27" fill="none" stroke="${C.dark}" stroke-width="8"/><path d="M69 29l7-12 7 12z" fill="${C.purple}"/></svg>`,
+bento:`<svg viewBox="0 0 120 120"><rect x="20" y="34" width="80" height="52" rx="17" fill="${C.cream}" stroke="${C.dark}" stroke-width="4"/><path d="M20 57h80M60 35v51" stroke="${C.red}" stroke-width="5"/></svg>`,
+tissue:`<svg viewBox="0 0 120 120"><path d="M24 51h72l9 48H15z" fill="${C.dark}" stroke="${C.purple}" stroke-width="4"/><path d="M35 52 27 29h23l10-18 11 18h22l-8 23" fill="#fff" stroke="${C.dark}" stroke-width="5" stroke-linejoin="round"/><rect x="42" y="45" width="36" height="10" rx="4" fill="${C.pink}" stroke="${C.dark}" stroke-width="4"/></svg>`,
+beanie:`<svg viewBox="0 0 120 120"><path d="M27 70c0-35 66-35 66 0v14H27z" fill="${C.dark}" stroke="${C.purple}" stroke-width="4"/><rect x="23" y="75" width="74" height="24" rx="8" fill="${C.dark}" stroke="${C.pink}" stroke-width="4"/></svg>`,
+backpack:`<svg viewBox="0 0 120 120"><path d="M35 38c0-22 50-22 50 0l12 61H23z" fill="${C.green}" stroke="${C.dark}" stroke-width="4"/><path d="M43 36V22m34 14V22M35 70h50" stroke="${C.gray}" stroke-width="5"/></svg>`,
+bottle:`<svg viewBox="0 0 120 120"><path d="M44 27h32l6 14v61H38V41z" fill="${C.orange}" stroke="${C.dark}" stroke-width="4"/><rect x="45" y="13" width="30" height="17" rx="6" fill="${C.gray}" stroke="${C.dark}" stroke-width="4"/><circle cx="60" cy="59" r="10" fill="#f1c36f"/></svg>`
+};
+const items=[
+["OFFICIAL LIGHT STICK",6000,"old","light",1],["ペンライトバッグ",3800,"old","bag",3],["ロゴパンツ",9000,"old","pants",3],["Tシャツ GY",5500,"old","shirt",3],["ロゴパーカー",11000,"old","hoodie",3],["トートバッグ",3300,"old","tote",3],["Tシャツ Rose",5300,"old","shirt",3],["ペンライトチャーム",2000,"old","key",3],["ペンライトストラップ",1000,"old","strap",3],["ミラーチャーム",1800,"old","mirror",3],["キーホルダー",1500,"old","key",3],["リップポーチ",2000,"old","pouch",3],["カードケース",2200,"old","cardcase",3],["タオル",2500,"old","towel",3],["ランダムフォトカード・ステッカーセット",500,"old","cards",10],
+["ロングスリーブTシャツ",6500,"new","longtee",3],["ソックスセット",2800,"new","socks",3],["ベルト",7800,"new","belt",3],["シュシュ",1800,"new","scrunchie",3],["ブランケット",4500,"new","blanket",3],["Wallet chain / CHIKA",7500,"new","wallet",1],["Ring set / NAOKO",5500,"new","ring",1],["Bento box / JISOO",7500,"new","bento",1],["Tissue box case / YURI",5500,"new","tissue",1],["Beanie / MOMOKA",3500,"new","beanie",1],["One-strap backpack / KOHARU",5000,"new","backpack",1],["Water bottle / MAHINA",5500,"new","bottle",1]
+].map((x,i)=>({id:i,name:x[0],price:x[1],group:x[2],icon:x[3],baseMax:x[4],max:x[4],qty:0,
+member:["Wallet chain / CHIKA","Ring set / NAOKO","Bento box / JISOO","Tissue box case / YURI","Beanie / MOMOKA","One-strap backpack / KOHARU","Water bottle / MAHINA"].includes(x[0])}));
+
+function japanNow(){
+  // Format current instant in Asia/Tokyo, then rebuild as a comparison-friendly local timestamp.
+  const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
+  const v=Object.fromEntries(parts.map(p=>[p.type,p.value]));
+  return `${v.year}-${v.month}-${v.day}T${v.hour}:${v.minute}:${v.second}`;
+}
+function memberLimit(){
+  const now=japanNow();
+  // Quantity-limited EC presale
+  if(now>="2026-08-29T20:00:00" && now<="2026-08-30T23:59:59") return 1;
+  // Made-to-order EC sale
+  if(now>="2026-08-31T20:00:00" && now<="2026-09-04T23:59:59"){
+   phase.innerHTML="⚠️ <b>Members’ Collection 購入上限</b><br><span style=\"font-size:15px\">8/31〜9/4　<b>各3点まで</b></span><br><small>販売期間に合わせて自動で切り替わっています</small>";
+ }else if(now>="2026-08-29T20:00:00" && now<="2026-08-30T23:59:59"){
+   phase.innerHTML="⚠️ <b>Members’ Collection 購入上限</b><br><span style=\"font-size:15px\">8/29〜30　<b>各1点まで</b></span><br><small>販売期間に合わせて自動で切り替わっています</small>";
+ }else{
+   phase.innerHTML="⚠️ <b>Members’ Collection 購入上限</b><br><span style=\"font-size:15px\">8/29〜30　<b>各1点まで</b><br>8/31〜9/4　<b>各3点まで</b></span><br><small>販売期間に合わせて自動で切り替わります</small>";
+ }
+}
+window.change=(id,d)=>{const x=items[id];x.qty=Math.max(0,Math.min(x.max,x.qty+d));render()};
+document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");filter=b.dataset.filter;render()});
+document.querySelector(".clear").onclick=()=>{items.forEach(x=>x.qty=0);render()};
+render();
+setInterval(render,60000);
+</script></body></html>
